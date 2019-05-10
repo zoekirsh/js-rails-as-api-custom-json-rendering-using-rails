@@ -82,7 +82,7 @@ rendering portion of the controller to make it render JSON. Bam! You have a
 rudimentary Rails API!
 
 Even though we are no longer serving up views the same way, maintaining RESTful
-conventions is still a HUGE plus here for your end API user (mainly yourself at
+conventions is still a HUGE plus here for your API end user (mainly yourself at
 the moment). We wouldn't want to pollute a Rails controller with a ton of extra
 actions in order to further customize how our data is shaped. To shape
 what data looks like further, we'll want to look at other options when rendering.
