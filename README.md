@@ -86,7 +86,7 @@ conventions is still a HUGE plus here for your API end user (mainly yourself at
 the moment). We wouldn't want to pollute a Rails controller with a ton of extra
 actions just to customize how our data is shaped.
 
-## Removing Content when Rendering
+## Removing Content When Rendering
 
 Sometimes, when sending JSON data, such as an entire model, we don't want or
 need to send the entire thing. Some data is sensitive - for instance, an API that
@@ -106,8 +106,31 @@ clutter we don't need. Consider the last piece of data:
 
 For our bird watching purposes, we probably don't need bits of data like
 `created_at` and `updated_at`. Rather than send this unnecessary info when
-rendering, we can cut it out. The simplest way would be to use Ruby's built-in
-`slice` method. On the `show` action, that would look like this:
+rendering, we just pick and choose what we want to send:
+
+```ruby
+def show
+  @bird = Bird.find(params[:id])
+  render json: {id: @bird.id, name: @bird.name, species: @bird.species } 
+end
+```
+
+Here, we've created a new hash out of three keys, assigning the keys manually
+with the attributes of @bird.
+
+The result is that when we visit a specific bird's endpoint, like
+`http://localhost:3000/birds/3`, we'll see just the id, name and species:
+
+```js
+{
+  "id": "3",
+  "name": "Common Starling",
+  "species": "Sturnus Vulgaris"
+}
+```
+
+Another option would be to use Ruby's built-in `slice` method. On the `show`
+action, that would look like this:
 
 ```ruby
 def show
@@ -116,14 +139,13 @@ def show
 end
 ```
 
-The `Hash` [`slice` method][slice] returns a hash with only the keys that are
-passed into `slice`. In this case, `:id`, `:name`, and `:species` were passed,
-in, so `created_at` and `updated_at` get cut out.
+This achieves the same result but in a slightly different way. Rather than
+having to spell out each key, the `Hash` [`slice` method][slice] returns a _new_
+hash with only the keys that are passed into `slice`. In this case, `:id`,
+`:name`, and `:species` were passed, in, so `created_at` and `updated_at` get
+left out, just like before.
 
 [slice]: https://ruby-doc.org/core-2.5.0/Hash.html#method-i-slice
-
-The result is that when we visit a specific bird's endpoint, like
-`http://localhost:3000/birds/3`, we'll see just the name and species:
 
 ```js
 {
