@@ -218,6 +218,33 @@ end
 The above code would achieve the same result, producing all `id`, `name`, and
 `species`. All the keys _except_ `created_at` and `updated_at`.
 
+## Drawing Back the Curtain on Rendering JSON Data
+
+The controller actions we have seen so far have a bit of syntatic sugar in them
+that obscures what is happening when in the render statements. The `only` and
+`except` keywords are actually parameters of the `to_json` method available to
+both [arrays][array.to_json] and [hashes][hash.to_json] in Rails! The last code
+snippet can be rewritten as the following tp show what is actually happening:
+
+```ruby
+def index
+  @birds = Bird.all
+  render json: @birds.to_json(except: [:created_at, :updated_at])
+end
+```
+
+This will work on our earlier, customized example as well:
+
+```ruby
+def show
+  @bird = Bird.find(params[:id])
+  render json: {id: @bird.id, name: @bird.name, species: @bird.species }.to_json
+end
+```
+
+It is important to point this syntatic sugar out because it **uniquely occurs in
+the render statements of controller actions**.
+
 ## Conclusion
 
 We can now take a single model or all the instances of that model and render it
@@ -229,3 +256,6 @@ skill that we're only just beginning to scratch the surface on.
 
 In the next lesson, we're going to continue to look at options for customizing
 rendered JSON content. Particularly, we'll be looking more at what we can _add_.
+
+[array.to_json]: https://apidock.com/rails/Array/to_json
+[hash.to_json]: https://apidock.com/rails/Hash/to_json
