@@ -222,9 +222,9 @@ The above code would achieve the same result, producing all `id`, `name`, and
 As we touched upon briefly in the previous lesson, the controller actions we 
 have seen so far have a bit of Rails 'magic' in them that obscures what is actually happening 
 when in the render statements. The `only` and `except` keywords are actually 
-parameters of the `to_json` method. This method is implicitly in the `render json:`
-statement, though we can still explicitly write it out if necessary. The last code 
-snippet can be rewritten as the following to show what is actually happening:
+parameters of the `to_json` method. This method is implicitly called on the arrays and hashes 
+we provide in the `render json:` statement, though we can still explicitly write it out if necessary. 
+The last code  snippet can be rewritten as the following to show what is actually happening:
 
 ```ruby
 def index
