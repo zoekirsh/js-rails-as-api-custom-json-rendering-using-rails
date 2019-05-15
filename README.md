@@ -242,8 +242,9 @@ def show
 end
 ```
 
-It is important to point this syntatic sugar out because it **uniquely occurs in
-the render statements of controller actions**.
+In upcoming lessons, we will look at the possibility of moving the work of customizing 
+JSON data out of the controller. Once we are outside of controller actions and the 'Rails 
+magic' we get with them, it will be useful to know the `to_json` method.
 
 ## Conclusion
 
