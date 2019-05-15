@@ -65,14 +65,14 @@ objects, but `http://localhost:3000/birds/2` will produce just one:
 ```
 
 We can use multiple routes to differentiate between specific requests. In an
-API, these are typically referred to as endpoints a user of the API could use to
-access specific pieces of data. We could build a fully functional CRUD resource
-rendering JSON and interact with it purely with JavaScript `fetch()` requests. 
+API, these are typically referred to as endpoints. A user of the API uses
+endpoints to access specific pieces of data. Just like a normal Rails, app,
+ we can create full CRUD based controllers that only render JSON.
 
 > **ASIDE:** If you've ever tried using `rails generate scaffold` to create a
-resource, you'll find that this is the case. Rails has favored convention over
-configuration and will set up JSON rendering for you almost immediately out
-of the box.
+> resource, you'll find that this is the case. Rails has favored convention over
+> configuration and will set up JSON rendering for you almost immediately out
+> of the box.
 
 In terms of communicating with JavaScript, even when sending POST requests, we
 do not need to change anything in our controller to handle a `fetch()` request
@@ -83,16 +83,15 @@ rudimentary Rails API!
 
 Even though we are no longer serving up views the same way, maintaining RESTful
 conventions is still a HUGE plus here for your API end user (mainly yourself at
-the moment). We wouldn't want to pollute a Rails controller with a ton of extra
-actions just to customize how our data is shaped.
+the moment).
 
 ## Removing Content When Rendering
 
 Sometimes, when sending JSON data, such as an entire model, we don't want or
-need to send the entire thing. Some data is sensitive - for instance, an API that
-sends user information might store details of a user that it uses internally, but
-does not want ever send externally on request. Sometimes, data is just extra 
-clutter we don't need. Consider the last piece of data:
+need to send the entire thing. Some data is sensitive, for instance. An API that
+sends user information might contain details of a user internally that it
+does not want to ever send externally on request. Sometimes, data is just extra 
+clutter we don't need. Consider, for instance, the last piece of data:
 
 ```ruby
 {
@@ -116,7 +115,7 @@ end
 ```
 
 Here, we've created a new hash out of three keys, assigning the keys manually
-with the attributes of @bird.
+with the attributes of `@bird`.
 
 The result is that when we visit a specific bird's endpoint, like
 `http://localhost:3000/birds/3`, we'll see just the id, name and species:
@@ -142,7 +141,7 @@ end
 This achieves the same result but in a slightly different way. Rather than
 having to spell out each key, the `Hash` [`slice` method][slice] returns a _new_
 hash with only the keys that are passed into `slice`. In this case, `:id`,
-`:name`, and `:species` were passed, in, so `created_at` and `updated_at` get
+`:name`, and `:species` were passed in, so `created_at` and `updated_at` get
 left out, just like before.
 
 [slice]: https://ruby-doc.org/core-2.5.0/Hash.html#method-i-slice
@@ -166,8 +165,8 @@ def index
 end
 ```
 
-In this case, Rails provides the `only:` keyword that we can add directly
-after listing an object we want to render to JSON.
+In this case, we can add in the `only:` option directly after listing an object
+we want to render to JSON:
 
 ```ruby
 def index
@@ -206,7 +205,7 @@ values, leaving out everything else:
 ```
 
 Alternatively, rather than specifically listing every key we want to include, we
-could also exclude particular content using `except:`, like so:
+could also exclude particular content using the `except:` option, like so:
 
 ```ruby
 def index
@@ -221,10 +220,11 @@ The above code would achieve the same result, producing all `id`, `name`, and
 ## Drawing Back the Curtain on Rendering JSON Data
 
 The controller actions we have seen so far have a bit of syntatic sugar in them
-that obscures what is happening when in the render statements. The `only` and
-`except` keywords are actually parameters of the `to_json` method available to
-both [arrays][array.to_json] and [hashes][hash.to_json] in Rails! The last code
-snippet can be rewritten as the following tp show what is actually happening:
+that obscures what is actually happening when in the render statements. The
+`only` and `except` keywords are actually parameters of the `to_json` method.
+This method is available to both [arrays][array.to_json] and
+[hashes][hash.to_json] in Rails. The last code snippet can be rewritten as the
+following to show what is actually happening:
 
 ```ruby
 def index
@@ -233,7 +233,7 @@ def index
 end
 ```
 
-This will work on our earlier, customized example as well:
+This will work on our earlier, customized example as well, since it is just a hash:
 
 ```ruby
 def show
