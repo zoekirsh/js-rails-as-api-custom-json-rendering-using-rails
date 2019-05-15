@@ -219,12 +219,12 @@ The above code would achieve the same result, producing all `id`, `name`, and
 
 ## Drawing Back the Curtain on Rendering JSON Data
 
-The controller actions we have seen so far have a bit of syntatic sugar in them
-that obscures what is actually happening when in the render statements. The
-`only` and `except` keywords are actually parameters of the `to_json` method.
-This method is available to both [arrays][array.to_json] and
-[hashes][hash.to_json] in Rails. The last code snippet can be rewritten as the
-following to show what is actually happening:
+As we touched upon briefly in the previous lesson, the controller actions we 
+have seen so far have a bit of Rails 'magic' in them that obscures what is actually happening 
+when in the render statements. The `only` and `except` keywords are actually 
+parameters of the `to_json` method. This method is implicitly in the `render json:`
+statement, though we can still explicitly write it out if necessary. The last code 
+snippet can be rewritten as the following to show what is actually happening:
 
 ```ruby
 def index
@@ -243,8 +243,8 @@ end
 ```
 
 In upcoming lessons, we will look at the possibility of moving the work of customizing 
-JSON data out of the controller. Once we are outside of controller actions and the 'Rails 
-magic' we get with them, it will be useful to know the `to_json` method.
+JSON data out of the controller. Once we are outside of controller actions and the Rails 
+magic we get with them, it will be useful to know the `to_json` method.
 
 ## Conclusion
 
