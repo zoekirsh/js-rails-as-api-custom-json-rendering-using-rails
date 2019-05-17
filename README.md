@@ -40,18 +40,21 @@ Then we could add an additional action:
 ```ruby
 class BirdsController < ApplicationController
   def index
-    @birds = Bird.all
-    render json: @birds
+    birds = Bird.all
+    render json: birds
   end
 
   def show
-    @bird = Bird.find(params[:id])
-    render json: @bird
+    bird = Bird.find_by(id: params[:id])
+    render json: bird
   end
 end
 ```
 
-Now, visiting `http://localhost:3000/birds` will produce an array of Bird
+> **Reminder:** No need for instance variables anymore, since we're immediately
+> rendering `birds` and `bird` to JSON and are not going to be using ERB
+
+Now, visiting `http://localhost:3000/birds` will produce an array of `Bird`
 objects, but `http://localhost:3000/birds/2` will produce just one:
 
 ```ruby
@@ -109,13 +112,13 @@ rendering, we just pick and choose what we want to send:
 
 ```ruby
 def show
-  @bird = Bird.find(params[:id])
-  render json: {id: @bird.id, name: @bird.name, species: @bird.species } 
+  bird = Bird.find_by(id: params[:id])
+  render json: {id: bird.id, name: bird.name, species: bird.species } 
 end
 ```
 
 Here, we've created a new hash out of three keys, assigning the keys manually
-with the attributes of `@bird`.
+with the attributes of `bird`.
 
 The result is that when we visit a specific bird's endpoint, like
 `http://localhost:3000/birds/3`, we'll see just the id, name and species:
@@ -133,8 +136,8 @@ action, that would look like this:
 
 ```ruby
 def show
-  @bird = Bird.find(params[:id])
-  render json: @bird.slice{:id, :name, :species}
+  bird = Bird.find_by(id: params[:id])
+  render json: bird.slice(:id, :name, :species)
 end
 ```
 
@@ -160,8 +163,8 @@ we have in our `index` action:
 
 ```ruby
 def index
-  @birds = Bird.all
-  render json: @birds
+  birds = Bird.all
+  render json: birds
 end
 ```
 
@@ -170,8 +173,8 @@ we want to render to JSON:
 
 ```ruby
 def index
-  @birds = Bird.all
-  render json: @birds, only: [:id, :name, :species]
+  birds = Bird.all
+  render json: birds, only: [:id, :name, :species]
 end
 ```
 
@@ -209,8 +212,8 @@ could also exclude particular content using the `except:` option, like so:
 
 ```ruby
 def index
-  @birds = Bird.all
-  render json: @birds, except: [:created_at, :updated_at]
+  birds = Bird.all
+  render json: birds, except: [:created_at, :updated_at]
 end
 ```
 
@@ -228,8 +231,8 @@ The last code  snippet can be rewritten as the following to show what is actuall
 
 ```ruby
 def index
-  @birds = Bird.all
-  render json: @birds.to_json(except: [:created_at, :updated_at])
+  birds = Bird.all
+  render json: birds.to_json(except: [:created_at, :updated_at])
 end
 ```
 
@@ -237,14 +240,51 @@ This will work on our earlier, customized example as well, since it is just a ha
 
 ```ruby
 def show
-  @bird = Bird.find(params[:id])
-  render json: {id: @bird.id, name: @bird.name, species: @bird.species }.to_json
+  bird = Bird.find_by(id: params[:id])
+  render json: {id: bird.id, name: bird.name, species: bird.species }.to_json
 end
 ```
 
-In upcoming lessons, we will look at the possibility of moving the work of customizing 
-JSON data out of the controller. Once we are outside of controller actions and the Rails 
-magic we get with them, it will be useful to know the `to_json` method.
+In upcoming lessons, we will look at the possibility of moving the work of
+customizing JSON data out of the controller. Once we are outside of controller
+actions and the Rails magic we get with them, it will be useful to know the
+`to_json` method.
+
+## Basic Error Messaging When Rendering JSON Data
+
+With the power to create our own APIs, we also have the power to define what to
+do when things go wrong. In our `show` action, we're currently using
+`Bird.find_by`, passing in `id: params[:id]`. When using `find_by`, if the record
+is not found, `nil` is returned. As we have it set up, if `params[:id]` does not
+match a valid id, `nil` will be assigned to the `bird` variable.
+
+As `nil` is a _false-y_ value in Ruby, this gives us the ability to write our
+own error messaging in the event that a request is made for a record that
+doesn't exist:
+
+```ruby
+def show
+  bird = Bird.find_by(id: params[:id])
+  if bird
+    render json: { id: bird.id, name: bird.name, species: bird.species }
+  else
+    render json: { message: 'Bird not found' }
+  end
+end
+```
+
+Now, if we were to send a request to `http://localhost:3000/birds/hello_birds`,
+rather than receiving a general HTTP error, we would still receive a response
+from the API:
+
+```js
+{
+  "message": "Bird not found"
+}
+```
+
+From here, we could build a more complex response, including additional details
+about what might have occurred.
 
 ## Conclusion
 
