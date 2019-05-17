@@ -158,7 +158,7 @@ left out, just like before.
 ```
 
 Cool, but once again, Rails has one better. While `slice` works fine for a
-single hash, as with `@bird`, it won't work for an array of hashes like the one
+single hash, as with `bird`, it won't work for an array of hashes like the one
 we have in our `index` action:
 
 ```ruby
