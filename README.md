@@ -69,8 +69,8 @@ objects, but `http://localhost:3000/birds/2` will produce just one:
 
 We can use multiple routes to differentiate between specific requests. In an
 API, these are typically referred to as endpoints. A user of the API uses
-endpoints to access specific pieces of data. Just like a normal Rails, app,
- we can create full CRUD based controllers that only render JSON.
+endpoints to access specific pieces of data. Just like a normal Rails app,
+we can create full CRUD based controllers that only render JSON. 
 
 > **ASIDE:** If you've ever tried using `rails generate scaffold` to create a
 > resource, you'll find that this is the case. Rails has favored convention over
