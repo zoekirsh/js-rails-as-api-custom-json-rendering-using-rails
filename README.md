@@ -10,7 +10,7 @@
 By using `render json:` in our Rails controller, we can take entire models or
 even collections of models, have Rails convert them to JSON, and send them out
 on request. We already have the makings of a basic API. In this lesson, we're
-going to look at shaping that data that gets converted to JSON and make it more
+going to look at shaping that data that gets converted to JSON and making it more
 useful to us from the frontend JavaScript perspective.
 
 The way we structure our data matters - it can lead to better, simpler code in
@@ -52,7 +52,7 @@ end
 ```
 
 > **Reminder:** No need for instance variables anymore, since we're immediately
-> rendering `birds` and `bird` to JSON and are not going to be using ERB
+> rendering `birds` and `bird` to JSON and are not going to be using ERB.
 
 Now, visiting `http://localhost:3000/birds` will produce an array of `Bird`
 objects, but `http://localhost:3000/birds/2` will produce just one:
@@ -93,7 +93,7 @@ the moment).
 Sometimes, when sending JSON data, such as an entire model, we don't want or
 need to send the entire thing. Some data is sensitive, for instance. An API that
 sends user information might contain details of a user internally that it
-does not want to ever send externally on request. Sometimes, data is just extra 
+does not want to ever share externally. Sometimes, data is just extra 
 clutter we don't need. Consider, for instance, the last piece of data:
 
 ```ruby
@@ -108,7 +108,7 @@ clutter we don't need. Consider, for instance, the last piece of data:
 
 For our bird watching purposes, we probably don't need bits of data like
 `created_at` and `updated_at`. Rather than send this unnecessary info when
-rendering, we just pick and choose what we want to send:
+rendering, we could just pick and choose what we want to send:
 
 ```ruby
 def show
@@ -217,17 +217,17 @@ def index
 end
 ```
 
-The above code would achieve the same result, producing all `id`, `name`, and
-`species`. All the keys _except_ `created_at` and `updated_at`.
+
+The above code would achieve the same result, producing only `id`, `name`, and
+`species` for each bird. All the keys _except_ `created_at` and `updated_at`.
 
 ## Drawing Back the Curtain on Rendering JSON Data
 
 As we touched upon briefly in the previous lesson, the controller actions we 
 have seen so far have a bit of Rails 'magic' in them that obscures what is actually happening 
 in the render statements. The `only` and `except` keywords are actually 
-parameters of the `to_json` method. This method is implicitly called on the arrays and hashes 
-we provide in the `render json:` statement, though we can still explicitly write it out if necessary. 
-The last code  snippet can be rewritten as the following to show what is actually happening:
+parameters of the `to_json` method, obscured by that magic. The last code snippet can be
+rewritten in full to show what is actually happening:
 
 ```ruby
 def index
@@ -236,27 +236,24 @@ def index
 end
 ```
 
-This will work on our earlier, customized example as well, since it is just a hash:
-
-```ruby
-def show
-  bird = Bird.find_by(id: params[:id])
-  render json: {id: bird.id, name: bird.name, species: bird.species }.to_json
-end
-```
-
-In upcoming lessons, we will look at the possibility of moving the work of
-customizing JSON data out of the controller. Once we are outside of controller
-actions and the Rails magic we get with them, it will be useful to know the
-`to_json` method.
+As customization becomes more complicated, writing in sometimes help to clarify what is happening.
 
 ## Basic Error Messaging When Rendering JSON Data
 
 With the power to create our own APIs, we also have the power to define what to
-do when things go wrong. In our `show` action, we're currently using
-`Bird.find_by`, passing in `id: params[:id]`. When using `find_by`, if the record
-is not found, `nil` is returned. As we have it set up, if `params[:id]` does not
-match a valid id, `nil` will be assigned to the `bird` variable.
+do when things go wrong. In our `show` action, we are currently using
+`Bird.find_by`, passing in `id: params[:id]`:
+
+```ruby
+def show
+  bird = Bird.find_by(id: params[:id])
+  render json: {id: bird.id, name: bird.name, species: bird.species } 
+end
+```
+
+When using `find_by`, if the record is not found, `nil` is returned. As we have 
+it set up, if `params[:id]` does not match a valid id, `nil` will be assigned to 
+the `bird` variable.
 
 As `nil` is a _false-y_ value in Ruby, this gives us the ability to write our
 own error messaging in the event that a request is made for a record that
