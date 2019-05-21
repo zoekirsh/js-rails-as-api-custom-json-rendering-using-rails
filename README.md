@@ -270,7 +270,7 @@ def show
 end
 ```
 
-Now, if we were to send a request to `http://localhost:3000/birds/hello_birds`,
+Now, if we were to send a request to an invalid endpoint like `http://localhost:3000/birds/hello_birds`,
 rather than receiving a general HTTP error, we would still receive a response
 from the API:
 
